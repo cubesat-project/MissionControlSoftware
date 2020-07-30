@@ -1,7 +1,9 @@
-const dotenv = require('dotenv');
+const dotenv = require('dotenv')
 dotenv.config();
+
 const accountSid = process.env.TWILIO_ACCOUNTSID;
 const authToken = process.env.TWILIO_AUTH_TOKEN;
+
 const client = require('twilio')(accountSid, authToken);
 
 function sendSMS(phoneNum, systemName, componentName, telemetryName, value, telemType) {
