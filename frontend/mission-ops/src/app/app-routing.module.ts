@@ -34,7 +34,7 @@ const routes: Routes = [
   { path : 'error/access-denied', component: AccessDeniedComponent },
   { path : 'logout', component: LogoutComponent/*, canActivate: [AuthGuardService] */},
   { path : 'chart', component: ChartComponent },
-  { path: 'telemetry', component: ComponentListComponent/*, canActivate: [AuthGuardService] */},
+  { path : 'telemetry', component: ComponentListComponent/*, canActivate: [AuthGuardService] */},
   { path : 'users', component: UsersComponent/*, canActivate: [AuthGuardService, AdminGuardService] */},
   { path : 'users/edit', component: ModifyUserComponent/*, canActivate: [AuthGuardService, AdminOrSelfGuardService] */},
   { path : 'system-inputs', component: CubesatSysInputsComponent/*, canActivate: [AuthGuardService, AdminGuardService] */},

@@ -1,14 +1,18 @@
 ﻿const dotenv = require('dotenv');
 dotenv.config();
-var mysql = require('mysql');
 
-var pool  = mysql.createPool({
-  connectionLimit : 10,
-  port            : process.env.DB_PORT,
-  host            : process.env.DB_ENDPOINT,
-  user            : process.env.DB_USERNAME,
-  password        : process.env.DB_PASSWORD,
-  database        : process.env.DATABASE_NAME
+const Pool = require('pg').Pool;
+
+const pool  = new Pool({
+
+	user: process.env.HEROKU_DB_USER,
+	host: process.env.HEROKU_DB_HOST,
+	database: process.env.HEROKU_DB_NAME,
+	password: process.env.HEROKU_DB_PASSWORD,
+	port: process.env.HEROKU_DB_PORT,
+	
+	ssl: {rejectUnauthorized: false}
+
 });
 
 module.exports = pool;
