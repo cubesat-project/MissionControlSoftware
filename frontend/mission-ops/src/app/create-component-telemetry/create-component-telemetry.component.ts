@@ -44,7 +44,9 @@ export class CreateComponentTelemetryComponent implements OnInit {
 
     
     this.hasBounds = this.isEditing ? this.selectedCompTelem.hasBounds : false;;
-    this.updateTelemetryType(this.isEditing ? this.selectedCompTelem.telemetryTypeID : this.telemetryTypes[0].telemetryTypeID);
+    this.updateTelemetryType(this.isEditing ? 
+      this.selectedCompTelem.telemetryTypeID : 
+      this.telemetryTypes[0].telemetryTypeID);
     this.createForm();
   }
 

@@ -84,8 +84,7 @@ router.route('/:ID')
                             
                             SET "systemName" = $1,
         
-                            WHERE
-                                "systemID" = $2
+                            WHERE "systemID" = $2
 
                             RETURNING *
                           `,
@@ -116,35 +115,94 @@ router.route('/:ID')
 
     // DELETE /systems/:systemID deletes a system, its components, and those components' componentTelemetries
     .delete(parseUrlencoded, parseJSON, (req, res) => {
-        try {
-            // delete all component telememetries whose components belong to this sytem
-            db.query("DELETE FROM componentTelemetry WHERE componentID IN (SELECT componentID FROM components WHERE systemID = ?)", req.params.ID, function (error, results, fields) {
-                if (error) throw error;
+        ;(async () => {
+            const client = await db.connect();
+            await client.query('BEGIN');
+            try {
+                var query = {
+                        text: 
+                            `DELETE FROM "componentTelemetry" 
+                                   
+                            WHERE "componentID" IN (
 
-                try {
-                    db.query("DELETE FROM components WHERE systemID = ?", req.params.ID, function(error, results, fields) {
-                        if (error) throw error;
-                        try {
-                            db.query("DELETE FROM systems WHERE systemID = ?", req.params.ID, function(error, results, fields) {
-                                if (error) throw error;
-                                console.log(results);
-                                res.json({byeSys: results.insertId});
-                                //res.sendStatus(200);
-                            })
-                        } catch (err) {
-                            console.log(err);
-                            res.send(err);
+                                SELECT "componentID" 
+                                FROM "components" 
+                                WHERE "systemID" = $1
+                            )
+
+                            RETURNING *
+                          `,
+                          values: [req.params.ID],
                         }
-                    })
-                } catch (err) {
-                    console.log(err);
-                    res.send(err);
-                }
-            })
-        } catch (err) {
-            console.log(err);
-            res.send(err);
-        }
+
+                var response = await client.query(query);
+
+                var query = {
+                        text: 
+                            `DELETE FROM "components" 
+                                   
+                            WHERE "systemID" = $1
+
+                            RETURNING *
+                          `,
+                          values: [req.params.ID],
+                        }
+
+                var response = await client.query(query);
+
+                var query = {
+                        text: 
+                            `DELETE FROM "systems" 
+                                   
+                            WHERE "systemID" = $1
+
+                            RETURNING *
+                          `,
+                          values: [req.params.ID],
+                        }
+
+                var response = await client.query(query);
+
+                await client.query('COMMIT');
+                res.json({byeSys: response.rows});
+            } catch (e) {
+                await client.query('ROLLBACK');
+                console.log(e);
+                res.send(e);
+            } finally {
+                await client.release();
+            }
+        })().catch(e => console.error(e.stack));
+
+    //     try {
+    //         // delete all component telememetries whose components belong to this sytem
+    //         db.query("DELETE FROM componentTelemetry WHERE componentID IN (SELECT componentID FROM components WHERE systemID = ?)", req.params.ID, function (error, results, fields) {
+    //             if (error) throw error;
+
+    //             try {
+    //                 db.query("DELETE FROM components WHERE systemID = ?", req.params.ID, function(error, results, fields) {
+    //                     if (error) throw error;
+    //                     try {
+    //                         db.query("DELETE FROM systems WHERE systemID = ?", req.params.ID, function(error, results, fields) {
+    //                             if (error) throw error;
+    //                             console.log(results);
+    //                             res.json({byeSys: results.insertId});
+    //                             //res.sendStatus(200);
+    //                         })
+    //                     } catch (err) {
+    //                         console.log(err);
+    //                         res.send(err);
+    //                     }
+    //                 })
+    //             } catch (err) {
+    //                 console.log(err);
+    //                 res.send(err);
+    //             }
+    //         })
+    //     } catch (err) {
+    //         console.log(err);
+    //         res.send(err);
+    //     }
     });
 
 
