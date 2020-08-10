@@ -11,7 +11,7 @@ router.route('/')
             const client = await db.connect()
             try {
                 const query = {
-                        text: 'SELECT * FROM table where column = $1',
+                        text: 'SELECT * FROM "table" WHERE "column" = $1',
                         values: [req.query.param],
                         }
                 const response = await client.query(query)
@@ -30,7 +30,7 @@ router.route('/')
             try {
                 const query = {
                         text: 
-                            `INSERT INTO table (column1, column2, column3)
+                            `INSERT INTO "table" ("column1", "column2", "column3")
           
                             VALUES ($1, $2, $3)
         
@@ -56,9 +56,9 @@ router.route('/')
                         text: 
                             `UPDATE "table" 
                             
-                            SET column1 = $1,
-                                column2 = $2,
-                                column3 = $3,
+                            SET "column1" = $1,
+                                "column2" = $2,
+                                "column3" = $3,
         
                             WHERE
                                 condition
