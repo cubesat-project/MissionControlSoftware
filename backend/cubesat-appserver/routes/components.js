@@ -8,15 +8,41 @@ var db = require('../database');
 router.route('/')
     // GET /components returns all components
     .get(parseUrlencoded, parseJSON, (req, res) => {
-        try {
-            db.query("SELECT * FROM components", function (error, results, fields) {
-                if (error) throw error;
-                res.send(results);
-              });
-        } catch (err) {
-            console.log(err);
-            res.send(err);
-        }
+
+        ;(async () => {
+
+            const client = await db.connect()
+
+            try {
+
+                const query = 'SELECT * FROM components';
+
+                const response = await client.query(query)
+
+                res.json(response.rows)
+
+            } catch (e) {
+
+                console.log(e);
+                res.send(e);
+
+            } finally {
+
+                await client.release()
+
+            }
+
+        })().catch(e => console.error(e.stack))
+
+        // try {
+        //     db.query("SELECT * FROM components", function (error, results, fields) {
+        //         if (error) throw error;
+        //         res.send(results);
+        //       });
+        // } catch (err) {
+        //     console.log(err);
+        //     res.send(err);
+        // }
     })
 
     // POST /components inserts a new component into the database
