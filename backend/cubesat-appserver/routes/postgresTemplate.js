@@ -98,8 +98,6 @@ router.route('/')
                 await client.release();
             }
         })().catch(e => console.error(e.stack));
-
-
     });
 
 module.exports = router;
