@@ -54,7 +54,7 @@ router.route('/')
             try {
                 const query = {
                         text: 
-                            `UPDATE table 
+                            `UPDATE "table" 
                             
                             SET column1 = $1,
                                 column2 = $2,

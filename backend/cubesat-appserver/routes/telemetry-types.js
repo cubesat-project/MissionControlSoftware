@@ -8,7 +8,7 @@ var db = require('../database');
 router.route('/')
     .get(parseUrlencoded, parseJSON, (req, res) => {
         try {
-            db.query("SELECT * FROM telemetryTypes", function (error, results, fields) {
+            db.query(`SELECT * FROM "telemetryTypes"`, function (error, results, fields) {
                 if (error) throw error;
                 res.send(results);
             });

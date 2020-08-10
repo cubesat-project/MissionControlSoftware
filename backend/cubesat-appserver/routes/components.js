@@ -11,7 +11,7 @@ router.route('/')
         ;(async () => {
             const client = await db.connect()
             try {
-                const query = 'SELECT * FROM components';
+                const query = 'SELECT * FROM "components"';
                 const response = await client.query(query)
                 res.json(response.rows)
             } catch (e) {
@@ -40,13 +40,13 @@ router.route('/')
             try {
                 const query = {
                         text: 
-                          `INSERT INTO components (subsystemID, name)
+                          `INSERT INTO "components" ("systemID", "name")
           
                              VALUES ($1, $2)
         
                             RETURNING *
                           `,
-                          values: [req.body.subsystemID, req.body.name],
+                          values: [req.body.systemID, req.body.name],
                       }
                 const response = await client.query(query)
                 res.json({newComp:response.rows});
@@ -79,17 +79,17 @@ router.route('/:ID')
             try {
                 const query = {
                         text: 
-                            `UPDATE components 
+                            `UPDATE "components" 
                             
-                            SET subsystemID = $1,
+                            SET "systemID" = $1,
                                 name = $2,
         
                             WHERE
-                                componentID = $3
+                                "componentID" = $3
 
                             RETURNING *
                           `,
-                          values: [req.body.subsystemID, req.body.name, req.params.ID],
+                          values: [req.body.systemID, req.body.name, req.params.ID],
                         }
                 const response = await client.query(query)
                 res.json({updateComp: response.rows});
@@ -146,7 +146,7 @@ router.route('/:ID')
             const client = await db.connect()
             try {
                 const query = {
-                        text: 'SELECT * FROM components where subsystemID = $1',
+                        text: 'SELECT * FROM "components" where "systemID" = $1',
                         values: [req.params.ID],
                         }
                 const response = await client.query(query)

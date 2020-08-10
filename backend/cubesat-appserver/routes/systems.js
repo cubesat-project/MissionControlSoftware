@@ -12,7 +12,7 @@ router.route('/')
         ;(async () => {
             const client = await db.connect()
             try {
-                const query = 'SELECT * FROM subsystems';
+                const query = 'SELECT * FROM "systems"';
                 const response = await client.query(query)
                 res.json(response.rows);
             } catch (e) {
@@ -41,7 +41,7 @@ router.route('/')
             try {
                 const query = {
                         text: 
-                            `INSERT INTO subsystems (systemName)
+                            `INSERT INTO "systems" ("systemName")
           
                             VALUES ($1)
         
@@ -80,12 +80,12 @@ router.route('/:ID')
             try {
                 const query = {
                         text: 
-                            `UPDATE subsystems 
+                            `UPDATE "systems" 
                             
-                            SET subsystemName = $1,
+                            SET "systemName" = $1,
         
                             WHERE
-                                subsystemID = $2
+                                "systemID" = $2
 
                             RETURNING *
                           `,
