@@ -10,6 +10,21 @@ router.route('/')
         ;(async () => {
             const client = await db.connect()
             try {
+                const query = 'SELECT * FROM "table"'
+                const response = await client.query(query)
+                res.json(response.rows);
+            } catch (e) {
+                console.log(e);
+                res.send(e);
+            } finally {
+                await client.release();
+            }
+        })().catch(e => console.error(e.stack));
+    })
+    .get(parseUrlencoded, parseJSON, (req, res) => {
+        ;(async () => {
+            const client = await db.connect()
+            try {
                 const query = {
                         text: 'SELECT * FROM "table" WHERE "column" = $1',
                         values: [req.query.param]
@@ -75,7 +90,8 @@ router.route('/')
                 await client.release();
             }
         })().catch(e => console.error(e.stack));
-    }).delete(parseUrlencoded, parseJSON, (req, res) => {
+    })
+    .delete(parseUrlencoded, parseJSON, (req, res) => {
         ;(async () => {
             const client = await db.connect()
             try {
