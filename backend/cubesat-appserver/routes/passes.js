@@ -7,95 +7,229 @@ var db = require('../database');
 
 router.route('/')
     .get(parseUrlencoded, parseJSON, (req, res) => {
-        try {
-            db.query("Select passes.*, COALESCE(passExecutedTelecommandsCount, 0) as numberOfTelecommandsToBeExecuted, COALESCE(passTransmittedTelecommandsCount, 0) as numberOfTelecommandsToBeTransmitted FROM passes LEFT JOIN (SELECT executionPassID, Count(*) as passExecutedTelecommandsCount from queuedTelecommands group by executionPassID) as executedTelecommandsCount on passes.passID = executedTelecommandsCount.executionPassID LEFT JOIN (SELECT transmissionPassID, Count(*) as passTransmittedTelecommandsCount from queuedTelecommands group by transmissionPassID) as transmittedTelecommandsCount on passes.passID = transmittedTelecommandsCount.transmissionPassID ORDER BY passID;", function (error, results, fields) {
-                if (error) throw error;
+        ;(async () => {
+            const client = await db.connect()
+            try {
+                const query = `SELECT passes.*, COALESCE("passExecutedTelecommandsCount", 0) AS "numberOfTelecommandsToBeExecuted", 
+                COALESCE("passTransmittedTelecommandsCount", 0) AS "numberOfTelecommandsToBeTransmitted" FROM "passes" 
+                LEFT JOIN (
+                    SELECT "executionPassID", Count(*) AS "passExecutedTelecommandsCount" FROM "queuedTelecommands" GROUP BY "executionPassID"
+                    ) 
 
-                res.send(results);
-              });
-        } catch (err) {
-            console.log(err);
-            res.send(err);
-        }
+                    AS "executedTelecommandsCount" on "passes.passID" = "executedTelecommandsCount.executionPassID"
+
+                LEFT JOIN (
+                    SELECT "transmissionPassID", Count(*) AS "passTransmittedTelecommandsCount" FROM "queuedTelecommands" GROUP BY "transmissionPassID"
+                    ) 
+
+                AS "transmittedTelecommandsCount" ON "passes.passID" = "transmittedTelecommandsCount.transmissionPassID" ORDER BY "passID";`
+                const response = await client.query(query)
+                res.json(response.rows);
+            } catch (e) {
+                console.log(e);
+                res.send(e);
+            } finally {
+                await client.release();
+            }
+        })().catch(e => console.error(e.stack));
+
+        // try {
+        //     db.query(
+        //         `Select passes.*, COALESCE(passExecutedTelecommandsCount, 0) AS numberOfTelecommandsToBeExecuted, 
+        //         COALESCE(passTransmittedTelecommandsCount, 0) AS numberOfTelecommandsToBeTransmitted FROM passes 
+        //         LEFT JOIN (
+        //             SELECT executionPassID, Count(*) AS passExecutedTelecommandsCount FROM queuedTelecommands GROUP BY executionPassID
+        //             ) 
+
+        //             AS executedTelecommandsCount on passes.passID = executedTelecommandsCount.executionPassID 
+
+        //         LEFT JOIN (
+        //             SELECT transmissionPassID, Count(*) AS passTransmittedTelecommandsCount FROM queuedTelecommands GROUP BY transmissionPassID
+        //             ) 
+
+        //         AS transmittedTelecommandsCount ON passes.passID = transmittedTelecommandsCount.transmissionPassID ORDER BY passID;`, function (error, results, fields) {
+        //         if (error) throw error;
+
+        //         res.send(results);
+        //       });
+        // } catch (err) {
+        //     console.log(err);
+        //     res.send(err);
+        // }
     })
     .post(parseUrlencoded, parseJSON, (req, res) => {
-        try {
-            var insertParameters = [req.body.passHasOccurred, req.body.estimatedPassDateTime, req.body.availablePower, req.body.availableBandwidth];
+        ;(async () => {
+            const client = await db.connect()
+            try {
+                const query = {
+                        text: 
+                            `INSERT INTO "passes" ("passHasOccurred", "estimatedPassDateTime", "availablePower", "availableBandwidth")
+          
+                            VALUES ($1, $2, $3, $4)
+        
+                            RETURNING *
+                            `,
+                            values: [req.body.passHasOccurred, req.body.estimatedPassDateTime, req.body.availablePower, req.body.availableBandwidth]
+                        }
+                const response = await client.query(query)
+                res.json(response.rows);
+            } catch (e) {
+                console.log(e);
+                res.send(e);
+            } finally {
+                await client.release();
+            }
+        })().catch(e => console.error(e.stack));
 
-            // using this pattern of using ? in our query builder does the escaping for us! No need to worry about sql injection
-            db.query('INSERT INTO passes (passHasOccurred, estimatedPassDateTime, availablePower, availableBandwidth) VALUES (?, ?, ?, ?)', insertParameters, function (error, results, fields) {
-                if (error) throw error;
+        // try {
+        //     var insertParameters = [req.body.passHasOccurred, req.body.estimatedPassDateTime, req.body.availablePower, req.body.availableBandwidth];
 
-                res.json(results);
-              });
-        } catch (err) {
-            console.log(err);
-            res.send(err);
-        }
+        //     // using this pattern of using ? in our query builder does the escaping for us! No need to worry about sql injection
+        //     db.query('INSERT INTO passes (passHasOccurred, estimatedPassDateTime, availablePower, availableBandwidth) VALUES (?, ?, ?, ?)', insertParameters, function (error, results, fields) {
+        //         if (error) throw error;
+
+        //         res.json(results);
+        //       });
+        // } catch (err) {
+        //     console.log(err);
+        //     res.send(err);
+        // }
     });
 
-router.route('/:id')
+router.route('/:ID')
     .put(parseUrlencoded, parseJSON, (req, res) => {
-        try {
+        ;(async () => {
+            const client = await db.connect()
+            try {
+                const query = {
+                        text: 
+                            `UPDATE "passes" 
+                            
+                            SET "passHasOccurred" = $1,
+                                "estimatedPassDateTime" = $2,
+        
+                            WHERE "telecommandID" = $3
 
-            var passToUpdate = req.params.id;
-            var updateParameters = [req.body.passHasOccurred, req.body.estimatedPassDateTime, passToUpdate];
+                            RETURNING *
+                          `,
+                          values: [req.body.passHasOccurred, req.body.estimatedPassDateTime, req.params.ID]
+                        }
+                const response = await client.query(query)
+                res.json(response.rows);
+            } catch (e) {
+                console.log(e);
+                res.send(e);
+            } finally {
+                await client.release();
+            }
+        })().catch(e => console.error(e.stack));
 
-            db.query('UPDATE passes SET passHasOccurred = ?, estimatedPassDateTime = ? WHERE telecommandID = ?', updateParameters, function (error, results, fields) {
-                if (error) throw error;
+        // try {
 
-                res.json(results);
-              });
-        } catch (err) {
-            console.log(err);
-            res.send(err);
-        }
+        //     var passToUpdate = req.params.ID;
+        //     var updateParameters = [req.body.passHasOccurred, req.body.estimatedPassDateTime, passToUpdate];
+
+        //     db.query('UPDATE passes SET passHasOccurred = ?, estimatedPassDateTime = ? WHERE telecommandID = ?', updateParameters, function (error, results, fields) {
+        //         if (error) throw error;
+
+        //         res.json(results);
+        //       });
+        // } catch (err) {
+        //     console.log(err);
+        //     res.send(err);
+        // }
     });
 
 router.route('/transmission-sum')
     .get(parseUrlencoded, parseJSON, (req, res) => {
-        try {
-            db.query('SELECT pass.passID, SUM(bandwidthUsage) as sumBandwidth, SUM(powerConsumption) as sumPower ' + 
-                'FROM cubesat.passes as pass ' +
-                'RIGHT JOIN cubesat.queuedTelecommands as qtc ' +
-                'ON pass.passID = qtc.transmissionPassID ' +
-                'LEFT JOIN cubesat.telecommands as tc ' + 
-                'ON qtc.telecommandID = tc.telecommandID ' + 
-                'GROUP BY pass.passID;', function (error, results, fields){
-                if (error) throw error;
-                if (!results) {
-                    console.log(results);
-                    res.send({error:'no results'});
-                }
-                res.json(results);
-            })
-        } catch (err) {
-            console.log(err);
-            res.send(err);
-        }
+        ;(async () => {
+            const client = await db.connect()
+            try {
+                const query = `SELECT pass.passID, SUM(bandwidthUsage) AS sumBandwidth, SUM(powerConsumption) AS sumPower ' 
+                'FROM cubesat.passes AS pass '
+
+                'RIGHT JOIN cubesat.queuedTelecommands AS qtc '
+                    'ON pass.passID = qtc.transmissionPassID ' 
+
+                'LEFT JOIN cubesat.telecommands AS tc ' 
+                    'ON qtc.telecommandID = tc.telecommandID ' 
+
+                'GROUP BY pass.passID;`
+                const response = await client.query(query)
+                res.json(response.rows);
+            } catch (e) {
+                console.log(e);
+                res.send(e);
+            } finally {
+                await client.release();
+            }
+        })().catch(e => console.error(e.stack));
+
+        // try {
+        //     db.query(`SELECT pass.passID, SUM(bandwidthUsage) as sumBandwidth, SUM(powerConsumption) as sumPower ' 
+        //         'FROM cubesat.passes as pass ' 
+        //         'RIGHT JOIN cubesat.queuedTelecommands as qtc ' 
+        //         'ON pass.passID = qtc.transmissionPassID ' 
+        //         'LEFT JOIN cubesat.telecommands as tc ' 
+        //         'ON qtc.telecommandID = tc.telecommandID ' 
+        //         'GROUP BY pass.passID;`, function (error, results, fields){
+        //         if (error) throw error;
+        //         if (!results) {
+        //             console.log(results);
+        //             res.send({error:'no results'});
+        //         }
+        //         res.json(results);
+        //     })
+        // } catch (err) {
+        //     console.log(err);
+        //     res.send(err);
+        // }
     });
 
 router.route('/execution-sum')
     .get(parseUrlencoded, parseJSON, (req, res) => {
-        try {
-            db.query('SELECT pass.passID, SUM(bandwidthUsage) as sumBandwidth, SUM(powerConsumption) as sumPower ' + 
-                'FROM cubesat.passes as pass ' +
-                'RIGHT JOIN cubesat.queuedTelecommands as qtc ' +
-                'ON pass.passID = qtc.executionPassID ' +
-                'LEFT JOIN cubesat.telecommands as tc ' + 
-                'ON qtc.telecommandID = tc.telecommandID ' + 
-                'GROUP BY pass.passID;', function (error, results, fields){
-                if (error) throw error;
-                if (!results) {
-                    console.log(results);
-                    res.send({error:'no results'});
-                }
-                res.json(results);
-            })
-        } catch (err) {
-            console.log(err);
-            res.send(err);
-        }
+        ;(async () => {
+            const client = await db.connect()
+            try {
+                const query = `SELECT pass.passID, SUM(bandwidthUsage) as sumBandwidth, SUM(powerConsumption) as sumPower ' 
+                'FROM cubesat.passes as pass ' 
+
+                'RIGHT JOIN cubesat.queuedTelecommands as qtc ' 
+                    'ON pass.passID = qtc.executionPassID ' 
+                    
+                'LEFT JOIN cubesat.telecommands as tc ' 
+                    'ON qtc.telecommandID = tc.telecommandID ' 
+
+                'GROUP BY pass.passID;`
+                const response = await client.query(query)
+                res.json(response.rows);
+            } catch (e) {
+                console.log(e);
+                res.send(e);
+            } finally {
+                await client.release();
+            }
+        })().catch(e => console.error(e.stack));
+
+        // try {
+        //     db.query(`SELECT pass.passID, SUM(bandwidthUsage) as sumBandwidth, SUM(powerConsumption) as sumPower ' 
+        //         'FROM cubesat.passes as pass ' 
+        //         'RIGHT JOIN cubesat.queuedTelecommands as qtc ' 
+        //         'ON pass.passID = qtc.executionPassID ' 
+        //         'LEFT JOIN cubesat.telecommands as tc ' 
+        //         'ON qtc.telecommandID = tc.telecommandID ' 
+        //         'GROUP BY pass.passID;`, function (error, results, fields){
+        //         if (error) throw error;
+        //         if (!results) {
+        //             console.log(results);
+        //             res.send({error:'no results'});
+        //         }
+        //         res.json(results);
+        //     })
+        // } catch (err) {
+        //     console.log(err);
+        //     res.send(err);
+        // }
     });
 
 module.exports = router;
