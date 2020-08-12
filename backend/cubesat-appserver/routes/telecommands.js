@@ -50,7 +50,7 @@ router.route('/')
           
                             VALUES ($1, $2, $3, $4, $5, $6, $7)
         
-                            RETURNING *
+                            RETURNING "telecommandID"
                             `,
                             values: [req.body.componentID, 
                                      req.body.command, 
@@ -61,7 +61,7 @@ router.route('/')
                                      req.body.archived]
                         }
                 const response = await client.query(query)
-                res.json(response.rows);
+                res.json(response.rows[0]);
             } catch (e) {
                 console.log(e);
                 res.send(e);
