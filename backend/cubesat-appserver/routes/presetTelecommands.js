@@ -66,9 +66,9 @@ router.route('/:ID')
             try {
                 const query = {
                         text: 
-                            `SELECT "presetTelecommands.*", "telecommands.name" FROM "presetTelecommands" 
+                            `SELECT "presetTelecommands".*, "telecommands"."name" FROM "presetTelecommands" 
 
-                            JOIN "telecommands" ON "presetTelecommands.telecommandID" = "telecommands.telecommandID" 
+                            JOIN "telecommands" ON "presetTelecommands"."telecommandID" = "telecommands"."telecommandID" 
 
                             WHERE "batchID" = ? 
 

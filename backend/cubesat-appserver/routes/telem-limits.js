@@ -18,27 +18,26 @@ router.route('/')
 
     })
 
-
     // GET /telem-limits returns all telemetry entries with their associated systems, components, and range values and units
     .get(parseUrlencoded, parseJSON, (req, res) => {
         ;(async () => {
             const client = await db.connect()
             try {
                 const query = 
-                        `SELECT "sys.systemID", 
-                                "sys.systemName" AS "systemName", 
-                                "comp.componentID", "comp.name" AS "componentName",
-                                "telem.upperBound", 
-                                "telem.lowerBound", 
-                                "types.name" AS "unit" 
+                        `SELECT sys."systemID", 
+                                sys."systemName" AS "systemName", 
+                                comp."componentID", comp."name" AS "componentName",
+                                telem."upperBound", 
+                                telem."lowerBound", 
+                                types."name" AS "unit" 
 
                         FROM "systems" sys
 
-                        INNER JOIN "components" comp ON "sys.systemID" = "comp.systemID" 
-                        INNER JOIN "componentTelemetry" telem ON "comp.componentID" = "telem.componentID" 
-                        INNER JOIN "telemetryTypes" types ON "telem.telemetryTypeID" = "types.telemetryTypeID" 
+                        INNER JOIN "components" comp ON sys."systemID" = comp."systemID" 
+                        INNER JOIN "componentTelemetry" telem ON comp."componentID" = telem."componentID" 
+                        INNER JOIN "telemetryTypes" types ON telem."telemetryTypeID" = types."telemetryTypeID" 
                         
-                        ORDER BY "sys.systemID", "comp.componentID"`
+                        ORDER BY sys."systemID", comp."componentID"`
 
                 const response = await client.query(query)
                 res.json(response.rows);

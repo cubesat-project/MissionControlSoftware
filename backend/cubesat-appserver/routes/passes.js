@@ -163,11 +163,11 @@ router.route('/transmission-sum')
                             SUM("bandwidthUsage") AS "sumBandwidth", 
                             SUM("powerConsumption") AS "sumPower"  
                 
-                    FROM cubesat."passes" AS "pass" 
+                    FROM passes 
 
-                    RIGHT JOIN cubesat."queuedTelecommands" AS qtc ON pass."passID" = qtc."transmissionPassID"
+                    RIGHT JOIN "queuedTelecommands" AS qtc ON passes."passID" = qtc."transmissionPassID"
 
-                    LEFT JOIN cubesat."telecommands" AS tc ON qtc."telecommandID" = tc."telecommandID" 
+                    LEFT JOIN "telecommands" AS tc ON qtc."telecommandID" = tc."telecommandID" 
 
                     GROUP BY pass."passID"`
 
@@ -212,11 +212,11 @@ router.route('/execution-sum')
                             SUM("bandwidthUsage") AS "sumBandwidth", 
                             SUM("powerConsumption") AS "sumPower" 
                     
-                    FROM cubesat."passes" AS "pass"  
+                    FROM passes  
 
-                    RIGHT JOIN cubesat."queuedTelecommands" AS qtc  ON pass."passID" = qtc."executionPassID"  
+                    RIGHT JOIN "queuedTelecommands" AS qtc ON passes."passID" = qtc."executionPassID"  
                     
-                    LEFT JOIN cubesat."telecommands" AS tc  ON qtc."telecommandID" = tc."telecommandID" 
+                    LEFT JOIN "telecommands" AS tc  ON qtc."telecommandID" = tc."telecommandID" 
 
                     GROUP BY pass."passID"`
                 const response = await client.query(query)
