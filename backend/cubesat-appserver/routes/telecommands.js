@@ -39,24 +39,24 @@ router.route('/')
                 const query = {
                         text: 
                             `INSERT INTO "telecommands" ("componentID", 
-                                                        "command", 
-                                                        "name", 
-                                                        "defaultPriorityLevel", 
-                                                        "bandwidthUsage", 
-                                                        "powerConsumption", 
-                                                        "archived")
+                                                         "command", 
+                                                         "name", 
+                                                         "defaultPriorityLevel", 
+                                                         "bandwidthUsage", 
+                                                         "powerConsumption", 
+                                                         "archived")
           
                             VALUES ($1, $2, $3, $4, $5, $6, $7)
         
                             RETURNING *
                             `,
                             values: [req.body.componentID, 
-                                    req.body.command, 
-                                    req.body.name, 
-                                    req.body.defaultPriorityLevel, 
-                                    req.body.bandwidthUsage, 
-                                    req.body.powerConsumption, 
-                                    req.body.archived]
+                                     req.body.command, 
+                                     req.body.name, 
+                                     req.body.defaultPriorityLevel, 
+                                     req.body.bandwidthUsage, 
+                                     req.body.powerConsumption, 
+                                     req.body.archived]
                         }
                 const response = await client.query(query)
                 res.json(response.rows);
@@ -97,7 +97,7 @@ router.route('/:id')
                             WHERE "telecommandID" = $1
 
                             RETURNING *
-                          `,
+                           `,
                           values: [req.params.id]
                         }
                 const response = await client.query(query)

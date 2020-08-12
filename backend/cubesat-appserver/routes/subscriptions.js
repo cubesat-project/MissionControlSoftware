@@ -16,15 +16,24 @@ router.route('/:userID')
             const client = await db.connect()
             try {
                 const query = {
-                        text: `SELECT joined.systemID, joined.systemName FROM 
-                        
-                                    (SELECT s.systemID, s.systemName, u.userID FROM systems s 
+                        text: 
+                            `SELECT "joined.systemID", 
+                                    "joined.systemName" 
 
-                                    INNER JOIN userAlertSubscriptions u ON s.systemID = u.systemID) 
+                            FROM (
 
-                                AS joined 
+                                SELECT "s.systemID", 
+                                       "s.systemName", 
+                                       "u.userID" 
 
-                                WHERE userID = ?`,
+                                FROM "systems" s 
+
+                                INNER JOIN "userAlertSubscriptions" u ON "s.systemID" = "u.systemID"
+
+                                ) AS joined 
+
+                            WHERE "userID" = $1`,
+
                         values: [req.params.userID]
                         }
                 const response = await client.query(query)

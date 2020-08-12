@@ -53,18 +53,23 @@ router.route('/')
 
                 const query = {
                         text: 
-                            `INSERT INTO "componentTelemetry" ("telemetryTypeID", "componentID", "name", "hasBounds", "upperBound", "lowerBound")
+                            `INSERT INTO "componentTelemetry" ("telemetryTypeID", 
+                                                               "componentID", 
+                                                               "name", 
+                                                               "hasBounds", 
+                                                               "upperBound", 
+                                                               "lowerBound")
           
                             VALUES ($1, $2, $3, $4, $5, $6)
         
                             RETURNING *
                             `,
                             values: [req.body.telemetryTypeID, 
-                                    req.body.componentID, 
-                                    req.body.name, 
-                                    hasBounds, 
-                                    req.body.upperBound, 
-                                    req.body.lowerBound],
+                                     req.body.componentID, 
+                                     req.body.name, 
+                                     hasBounds, 
+                                     req.body.upperBound, 
+                                     req.body.lowerBound],
                         }
                 const response = await client.query(query)
                 res.json({newCompTelem: response.rows});
@@ -145,12 +150,12 @@ router.route('/:ID')
                             RETURNING *
                           `,
                           values: [req.body.telemetryTypeID, 
-                                  req.body.componentID, 
-                                  req.body.name, 
-                                  req.body.hasBounds, 
-                                  req.body.upperBound, 
-                                  req.body.lowerBound, 
-                                  req.params.ID]
+                                   req.body.componentID, 
+                                   req.body.name, 
+                                   req.body.hasBounds, 
+                                   req.body.upperBound, 
+                                   req.body.lowerBound, 
+                                   req.params.ID]
                         }
                 const response = await client.query(query)
                 res.json(response.rows);
@@ -179,16 +184,39 @@ router.route('/:ID')
 
     // DELETE /component-telemetry/:componentTelemetryID deletes the componentTelemetryID entry
     .delete(parseUrlencoded, parseJSON, (req, res) => {
-        try {
-            db.query("DELETE FROM componentTelemetry WHERE componentTelemetryID = ?", req.params.ID, function(error, results, fields) {
-                if (error) throw error;
-                res.json({byeCompTelem:results.insertId});
-                //res.sendStatus(200);
-            })
-        } catch(err) {
-            console.log(err);
-            res.send(err);
-        }
+        ;(async () => {
+            const client = await db.connect()
+            try {
+                const query = {
+                        text: 
+                            `DELETE FROM "componentTelemetry" 
+
+                            WHERE "componentTelemetryID" = $1
+
+                            RETURNING *
+                          `,
+                          values: [req.params.ID]
+                        }
+                const response = await client.query(query)
+                res.json(response.rows);
+            } catch (e) {
+                console.log(e);
+                res.send(e);
+            } finally {
+                await client.release();
+            }
+        })().catch(e => console.error(e.stack));
+
+        // try {
+        //     db.query("DELETE FROM componentTelemetry WHERE componentTelemetryID = ?", req.params.ID, function(error, results, fields) {
+        //         if (error) throw error;
+        //         res.json({byeCompTelem:results.insertId});
+        //         //res.sendStatus(200);
+        //     })
+        // } catch(err) {
+        //     console.log(err);
+        //     res.send(err);
+        // }
     })
 
 module.exports = router;

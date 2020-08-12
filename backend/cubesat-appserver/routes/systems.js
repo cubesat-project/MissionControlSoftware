@@ -46,7 +46,7 @@ router.route('/')
                             VALUES ($1)
         
                             RETURNING *
-                            `,
+                           `,
                             values: [req.body.systemName],
                         }
                 const response = await client.query(query)
@@ -87,7 +87,7 @@ router.route('/:ID')
                             WHERE "systemID" = $2
 
                             RETURNING *
-                          `,
+                           `,
                           values: [req.body.systemName, req.params.ID],
                         }
                 const response = await client.query(query)
@@ -123,7 +123,9 @@ router.route('/:ID')
                         text: 
                             `DELETE FROM "componentTelemetry" 
                                    
-                            WHERE "componentID" IN (
+                            WHERE "componentID" 
+
+                            IN (
 
                                 SELECT "componentID" 
                                 FROM "components" 
@@ -131,7 +133,7 @@ router.route('/:ID')
                             )
 
                             RETURNING *
-                          `,
+                           `,
                           values: [req.params.ID],
                         }
 
@@ -144,7 +146,7 @@ router.route('/:ID')
                             WHERE "systemID" = $1
 
                             RETURNING *
-                          `,
+                           `,
                           values: [req.params.ID],
                         }
 

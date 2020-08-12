@@ -40,12 +40,12 @@ router.route('/')
             try {
                 const query = {
                         text: 
-                          `INSERT INTO "components" ("systemID", "name")
+                            `INSERT INTO "components" ("systemID", "name")
           
-                             VALUES ($1, $2)
+                            VALUES ($1, $2)
         
                             RETURNING *
-                          `,
+                            `,
                           values: [req.body.systemID, req.body.name],
                       }
                 const response = await client.query(query)
@@ -82,7 +82,7 @@ router.route('/:ID')
                             `UPDATE "components" 
                             
                             SET "systemID" = $1,
-                                name = $2,
+                                "name" = $2,
         
                             WHERE
                                 "componentID" = $3
@@ -113,31 +113,70 @@ router.route('/:ID')
         //     res.json(err);
         // }
     })
-
     // DELETE /components/:componentID removes an existing component and all of its associated componentTelemetries
     .delete(parseUrlencoded, parseJSON, (req, res) => {
+        ;(async () => {
+            const client = await db.connect();
+            await client.query('BEGIN');
 
-        try {
-            // delete all componentTelemetries with this componentID
-            db.query("DELETE FROM componentTelemetry WHERE componentID = ?", req.params.ID, function(error, results, fields) {
+            try {
+                var query = {
+                        text: 
+                            `DELETE FROM "componentTelemetry" 
+
+                            WHERE "componentID" = $1
+
+                            RETURNING *
+                          `,
+                          values: [req.params.ID]
+                        }
+                var response = await client.query(query)
+
+                var query = {
+                        text: 
+                            `DELETE FROM "components" 
+
+                            WHERE "componentID" = $1
+
+                            RETURNING *
+                          `,
+                          values: [req.params.ID]
+                        }
+
+                var response = await client.query(query)            
+                res.json(response.rows);
+
+                await client.query('COMMIT');
+            } catch (e) {
+                await client.query('ROLLBACK');
+                console.log(e);
+                res.send(e);
+            } finally {
+                await client.release();
+            }
+        })().catch(e => console.error(e.stack));
+
+        // try {
+        //     // delete all componentTelemetries with this componentID
+        //     db.query("DELETE FROM componentTelemetry WHERE componentID = ?", req.params.ID, function(error, results, fields) {
                 
-                // then delete the component itself from the component table
-                try {
-                    db.query("DELETE FROM components WHERE componentID = ?", req.params.ID, function(error, results, fields) {
-                        if (error) throw error;
-                        res.json({byeComp: results.insertId});
-                        //res.sendStatus(200);
-                    })
-                } catch(err) {
-                    console.log(err);
-                    res.send(err);
-                }
+        //         // then delete the component itself from the component table
+        //         try {
+        //             db.query("DELETE FROM components WHERE componentID = ?", req.params.ID, function(error, results, fields) {
+        //                 if (error) throw error;
+        //                 res.json({byeComp: results.insertId});
+        //                 //res.sendStatus(200);
+        //             })
+        //         } catch(err) {
+        //             console.log(err);
+        //             res.send(err);
+        //         }
             
-            })
-        } catch(err) {
-            console.log(err);
-            res.send(err);
-        }
+        //     })
+        // } catch(err) {
+        //     console.log(err);
+        //     res.send(err);
+        // }
     })
 
     // GET /components/:systemID returns all components associated with the systemID specified as a parameter

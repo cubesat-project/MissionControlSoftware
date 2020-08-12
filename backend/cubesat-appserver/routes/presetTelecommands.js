@@ -65,13 +65,14 @@ router.route('/:ID')
             const client = await db.connect()
             try {
                 const query = {
-                        text: `SELECT presetTelecommands.*, telecommands.name FROM presetTelecommands 
+                        text: 
+                            `SELECT "presetTelecommands.*", "telecommands.name" FROM "presetTelecommands" 
 
-                                JOIN telecommands ON presetTelecommands.telecommandID = telecommands.telecommandID 
+                            JOIN "telecommands" ON "presetTelecommands.telecommandID" = "telecommands.telecommandID" 
 
-                                WHERE batchID = ? 
+                            WHERE "batchID" = ? 
 
-                                ORDER BY dayDelay, hourDelay, minuteDelay, secondDelay`,
+                            ORDER BY "dayDelay", "hourDelay", "minuteDelay", "secondDelay"`,
 
                         values: [req.params.id]
                         }
@@ -113,7 +114,7 @@ router.route('/:ID')
                                 "priorityLevel" = $5,
                                 "commandParameters" = $6,
         
-                            WHERE presetTelecommandID = $7
+                            WHERE "presetTelecommandID" = $7
 
                             RETURNING *
                           `,
