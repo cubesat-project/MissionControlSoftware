@@ -8,6 +8,7 @@
     powerConsumption: number;
     archived: boolean;
 
+    //this constructor needs to be fixed
     constructor(name: string) {
         this.name = name;
         this.archived = false;

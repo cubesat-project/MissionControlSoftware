@@ -35,6 +35,8 @@ router.route('/')
     .post(parseUrlencoded, parseJSON, (req, res) => {
         ;(async () => {
             const client = await db.connect()
+
+            console.log(req.body)
             try {
                 const query = {
                         text: 

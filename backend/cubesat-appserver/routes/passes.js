@@ -15,7 +15,7 @@ router.route('/')
                                     COALESCE("passExecutedTelecommandsCount", 0) AS "numberOfTelecommandsToBeExecuted", 
                                     COALESCE("passTransmittedTelecommandsCount", 0) AS "numberOfTelecommandsToBeTransmitted" 
                                     
-                            FROM "passes" 
+                            FROM "passes"
 
                             LEFT JOIN (
 
@@ -24,7 +24,7 @@ router.route('/')
 
                                 FROM "queuedTelecommands" GROUP BY "executionPassID"
 
-                                ) AS "extc" ON "passes.passID" = "extc.executionPassID"
+                                ) AS extc ON passes."passID" = extc."executionPassID"
 
                             LEFT JOIN (
 
@@ -33,7 +33,7 @@ router.route('/')
 
                                 FROM "queuedTelecommands" GROUP BY "transmissionPassID"
 
-                                ) AS "ttc" ON "passes.passID" = "ttc.transmissionPassID" ORDER BY "passID"`
+                                ) AS ttc ON passes."passID" = ttc."transmissionPassID" ORDER BY "passID"`
 
                 const response = await client.query(query)
                 res.json(response.rows);
@@ -72,6 +72,7 @@ router.route('/')
     .post(parseUrlencoded, parseJSON, (req, res) => {
         ;(async () => {
             const client = await db.connect()
+            console.log(req.body)
             try {
                 const query = {
                         text: 
@@ -158,17 +159,17 @@ router.route('/transmission-sum')
             const client = await db.connect()
             try {
                 const query = 
-                    `SELECT "pass.passID", 
+                    `SELECT pass."passID", 
                             SUM("bandwidthUsage") AS "sumBandwidth", 
                             SUM("powerConsumption") AS "sumPower"  
                 
-                    FROM "cubesat.passes" AS "pass" 
+                    FROM cubesat."passes" AS "pass" 
 
-                    RIGHT JOIN "cubesat.queuedTelecommands" AS qtc ON "pass.passID" = "qtc.transmissionPassID"
+                    RIGHT JOIN cubesat."queuedTelecommands" AS qtc ON pass."passID" = qtc."transmissionPassID"
 
-                    LEFT JOIN "cubesat.telecommands" AS tc ON qtc.telecommandID = tc.telecommandID 
+                    LEFT JOIN cubesat."telecommands" AS tc ON qtc."telecommandID" = tc."telecommandID" 
 
-                    GROUP BY pass.passID`
+                    GROUP BY pass."passID"`
 
                 const response = await client.query(query)
                 res.json(response.rows);
@@ -207,17 +208,17 @@ router.route('/execution-sum')
             const client = await db.connect()
             try {
                 const query = 
-                    `SELECT "pass.passID", 
+                    `SELECT pass."passID", 
                             SUM("bandwidthUsage") AS "sumBandwidth", 
                             SUM("powerConsumption") AS "sumPower" 
                     
-                    FROM "cubesat.passes" AS "pass"  
+                    FROM cubesat."passes" AS "pass"  
 
-                    RIGHT JOIN "cubesat.queuedTelecommands" AS qtc  ON "pass.passID" = "qtc.executionPassID"  
+                    RIGHT JOIN cubesat."queuedTelecommands" AS qtc  ON pass."passID" = qtc."executionPassID"  
                     
-                    LEFT JOIN "cubesat.telecommands" AS tc  ON "qtc.telecommandID" = "tc.telecommandID" 
+                    LEFT JOIN cubesat."telecommands" AS tc  ON qtc."telecommandID" = tc."telecommandID" 
 
-                    GROUP BY "pass.passID"`
+                    GROUP BY pass."passID"`
                 const response = await client.query(query)
                 res.json(response.rows);
             } catch (e) {

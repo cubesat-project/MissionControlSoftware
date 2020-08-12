@@ -83,7 +83,7 @@ router.route('/')
     //         console.log(err);
     //         res.send(err);
     //     }
-    // });
+    });
 
 router.route('/:ID')
     .put(parseUrlencoded, parseJSON, (req, res) => {
