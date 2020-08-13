@@ -44,7 +44,7 @@ export class AuthService {
     ClientId: env.cognito.userPoolClientId                  //CognitoUserPoolClient 
   };
 
-  private _currentUser: User = new User();
+  private _currentUser: User;
   private _cognitoUser: CognitoUser;
   private _session: CognitoUserSession;
 

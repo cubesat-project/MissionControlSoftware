@@ -32,12 +32,12 @@ export class ExecutionQueueComponent implements OnInit {
     private queuedTelecommandService: QueuedTelecommandService) { }
 
   ngOnInit() {
-    // this.userService.getUsers(Number.MAX_SAFE_INTEGER - 1)
-    // .subscribe(users => {
-    //   this.users = users.items
-    //   this.reloadQueuedTelecommands();
-    // });
-    this.users.push(new User());
+    this.userService.getUsers(Number.MAX_SAFE_INTEGER - 1)
+    .subscribe(users => {
+      this.users = users.items
+      this.reloadQueuedTelecommands();
+    });
+    // this.users.push(new User());
   }
 
   ngOnChanges(changes: SimpleChanges) : void
