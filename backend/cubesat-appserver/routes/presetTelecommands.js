@@ -70,11 +70,11 @@ router.route('/:ID')
 
                             JOIN "telecommands" ON "presetTelecommands"."telecommandID" = "telecommands"."telecommandID" 
 
-                            WHERE "batchID" = ? 
+                            WHERE "batchID" = $1 
 
                             ORDER BY "dayDelay", "hourDelay", "minuteDelay", "secondDelay"`,
 
-                        values: [req.params.id]
+                        values: [req.params.ID]
                         }
                 const response = await client.query(query)
                 res.json(response.rows);

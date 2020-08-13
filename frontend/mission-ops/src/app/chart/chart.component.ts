@@ -154,6 +154,7 @@ buildChart() : void
       showInLegend: false,
       data: this.values,
       zones: zones,
+      marker: {enabled: true},
       animation: {
         duration: 1000,
       }
