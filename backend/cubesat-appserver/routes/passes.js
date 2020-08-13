@@ -159,7 +159,7 @@ router.route('/transmission-sum')
             const client = await db.connect()
             try {
                 const query = 
-                    `SELECT pass."passID", 
+                    `SELECT passes."passID", 
                             SUM("bandwidthUsage") AS "sumBandwidth", 
                             SUM("powerConsumption") AS "sumPower"  
                 
@@ -169,7 +169,7 @@ router.route('/transmission-sum')
 
                     LEFT JOIN "telecommands" AS tc ON qtc."telecommandID" = tc."telecommandID" 
 
-                    GROUP BY pass."passID"`
+                    GROUP BY passes."passID"`
 
                 const response = await client.query(query)
                 res.json(response.rows);
@@ -208,7 +208,7 @@ router.route('/execution-sum')
             const client = await db.connect()
             try {
                 const query = 
-                    `SELECT pass."passID", 
+                    `SELECT passes."passID", 
                             SUM("bandwidthUsage") AS "sumBandwidth", 
                             SUM("powerConsumption") AS "sumPower" 
                     
@@ -218,7 +218,7 @@ router.route('/execution-sum')
                     
                     LEFT JOIN "telecommands" AS tc  ON qtc."telecommandID" = tc."telecommandID" 
 
-                    GROUP BY pass."passID"`
+                    GROUP BY passes."passID"`
                 const response = await client.query(query)
                 res.json(response.rows);
             } catch (e) {

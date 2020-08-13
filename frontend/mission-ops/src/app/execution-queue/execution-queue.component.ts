@@ -27,14 +27,17 @@ export class ExecutionQueueComponent implements OnInit {
   @Input() selectedPass: Pass;
   users: User[]
   
-  constructor(private userService: UsersService, private queuedTelecommandService: QueuedTelecommandService) { }
+  constructor(
+    private userService: UsersService, 
+    private queuedTelecommandService: QueuedTelecommandService) { }
 
   ngOnInit() {
-    this.userService.getUsers(Number.MAX_SAFE_INTEGER - 1)
-    .subscribe(users => {
-      this.users = users.items
-      this.reloadQueuedTelecommands();
-    });
+    // this.userService.getUsers(Number.MAX_SAFE_INTEGER - 1)
+    // .subscribe(users => {
+    //   this.users = users.items
+    //   this.reloadQueuedTelecommands();
+    // });
+    this.users.push(new User());
   }
 
   ngOnChanges(changes: SimpleChanges) : void
