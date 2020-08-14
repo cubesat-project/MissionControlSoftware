@@ -152,7 +152,7 @@ buildChart() : void
       name: this.name,
       type: 'line',
       showInLegend: false,
-      data: this.values,
+      data: this.values.map(Number),
       zones: zones,
       marker: {enabled: true},
       animation: {
