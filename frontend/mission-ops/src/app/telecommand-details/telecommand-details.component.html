@@ -12,6 +12,19 @@
         <label >Power Consumption</label>
         <input [readonly]="existingTelecommand" [(ngModel)] = "telecommand.powerConsumption"  class="form-control" name = "telecommandPowerConsumption">
       </div>
+      <div class="form-group">
+        <div *ngIf="!existingTelecommand; else viewingTelecommand">
+          <label >Component ID</label>
+          <select class="custom-select" [(ngModel)] = "telecommand.componentID"  class="form-control" name = "telecommandComponentID">
+            <option value="" disabled>Choose Components</option>
+            <option *ngFor="let component of components" [ngValue]="component.componentID">{{component.componentID}} - {{component.name}}</option>
+          </select>
+        </div>
+        <ng-template #viewingTelecommand>
+          <label >Component ID</label>
+        <input [readonly]="existingTelecommand" [(ngModel)] = "telecommand.componentID"  class="form-control" name = "telecommandComponentID">
+        </ng-template>
+      </div>
       <div class="form-check">
         <input [readonly]="existingTelecommand" [(ngModel)] = "telecommand.defaultPriorityLevel" type="checkbox" class="form-check-input" name="telecommandDefaultPriorityLevel">
         <label>High Priority Command</label>

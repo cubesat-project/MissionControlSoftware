@@ -41,7 +41,7 @@ export class CreateComponentComponent implements OnInit {
   private createForm() : void
   {
     this.createCompForm = this.formBuilder.group({
-      system: '',
+      system: this.system.systemName,
       name: this.isEditing ? this.selectedComponent.name : ''
     });
   }

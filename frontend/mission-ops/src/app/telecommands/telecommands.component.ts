@@ -48,7 +48,7 @@ export class TelecommandsComponent implements OnInit {
     this.telecommandService.createTelecommand(this.selectedTelecommand)
     .subscribe(response => {      
       this.viewingExistingTelecommand = true;
-      this.selectedTelecommand.telecommandID = response.insertId;
+      this.selectedTelecommand.telecommandID = response.telecommandID;
     });
   }
 

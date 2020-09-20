@@ -17,18 +17,18 @@ router.route('/:userID')
             try {
                 const query = {
                         text: 
-                            `SELECT "joined.systemID", 
-                                    "joined.systemName" 
+                            `SELECT joined."systemID", 
+                                    joined."systemName" 
 
                             FROM (
 
-                                SELECT "s.systemID", 
-                                       "s.systemName", 
-                                       "u.userID" 
+                                SELECT s."systemID", 
+                                       s."systemName", 
+                                       u."userID" 
 
                                 FROM "systems" s 
 
-                                INNER JOIN "userAlertSubscriptions" u ON "s.systemID" = "u.systemID"
+                                INNER JOIN "userAlertSubscriptions" u ON s."systemID" = u."systemID"
 
                                 ) AS joined 
 

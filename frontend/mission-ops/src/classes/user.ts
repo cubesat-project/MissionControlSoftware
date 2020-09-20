@@ -9,13 +9,13 @@ export class User {
 
     constructor(params: User = {} as User) {
         let {
-            id = '',
-            email = '',
-            phone = '',
-            administrator = false,
-            status = '',
-            preferredContactMethod = '',
-            name = ''
+            id = 'alexispascual',
+            email = 'apascua2@uwo.ca',
+            phone = '+1 519 280 7376',
+            administrator = true,
+            status = 'active',
+            preferredContactMethod = 'email',
+            name = 'Alexis Pascual'
         } = params;
 
         this.id = id;

@@ -66,15 +66,15 @@ router.route('/:ID')
             try {
                 const query = {
                         text: 
-                            `SELECT "presetTelecommands.*", "telecommands.name" FROM "presetTelecommands" 
+                            `SELECT "presetTelecommands".*, "telecommands"."name" FROM "presetTelecommands" 
 
-                            JOIN "telecommands" ON "presetTelecommands.telecommandID" = "telecommands.telecommandID" 
+                            JOIN "telecommands" ON "presetTelecommands"."telecommandID" = "telecommands"."telecommandID" 
 
-                            WHERE "batchID" = ? 
+                            WHERE "batchID" = $1 
 
                             ORDER BY "dayDelay", "hourDelay", "minuteDelay", "secondDelay"`,
 
-                        values: [req.params.id]
+                        values: [req.params.ID]
                         }
                 const response = await client.query(query)
                 res.json(response.rows);

@@ -44,10 +44,10 @@ export class AuthService {
     ClientId: env.cognito.userPoolClientId                  //CognitoUserPoolClient 
   };
 
-  private _currentUser: User;
+  private _currentUser: User = new User();
   private _cognitoUser: CognitoUser;
   private _session: CognitoUserSession;
-  
+
   private get currentUser(): User {
     if (!this._currentUser) {
       this._currentUser = new User(JSON.parse(sessionStorage.getItem('currentUser')) || {});

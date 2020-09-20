@@ -37,6 +37,7 @@ router.route('/')
 
         ;(async () => {
             const client = await db.connect()
+            console.log(req.body[0])
             try {
                 const query = {
                         text: 
@@ -44,7 +45,7 @@ router.route('/')
                                                                "executionPassID", 
                                                                "transmissionPassID", 
                                                                "telecommandID", 
-                                                               "priority", 
+                                                               "priorityLevel", 
                                                                "executionTimeUTC", 
                                                                "commandParameters")
           
@@ -52,12 +53,7 @@ router.route('/')
         
                             RETURNING *
                             `,
-                            values: [req.body.executionPassID, 
-                                     req.body.transmissionPassID, 
-                                     req.body.userID, 
-                                     req.body.telecommandID, 
-                                     req.body.priorityLevel, 
-                                     req.body.executionTime]
+                            values: req.body[0]
                         }
                 const response = await client.query(query)
                 res.json(response.rows);
@@ -74,7 +70,7 @@ router.route('/')
 
     //         // using this pattern of using ? in our query builder does the escaping for us! No need to worry about sql injection
     //         console.log(req.body);
-    //         db.query(`INSERT INTO queuedTelecommands (userID, executionPassID, transmissionPassID, telecommandID, priority, executionTimeUTC, commandParameters) VALUES ?`, [req.body], function (error, results, fields) {
+    //         db.query(`INSERT INTO queuedTelecommands (userID, executionPassID, transmissionPassID, telecommandID, priorityLevel, executionTimeUTC, commandParameters) VALUES ?`, [req.body], function (error, results, fields) {
     //             if (error) throw error;
 
     //             res.json(results);

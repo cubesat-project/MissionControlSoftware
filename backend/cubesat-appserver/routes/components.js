@@ -13,6 +13,7 @@ router.route('/')
             try {
                 const query = 'SELECT * FROM "components"';
                 const response = await client.query(query)
+                console.log(response.rows);
                 res.json(response.rows)
             } catch (e) {
                 console.log(e);

@@ -82,10 +82,11 @@ router.route('/:componentTelemetryID')
 
                 if (req.query.startDate) {
                     var query = {
-                            text: 'SELECT * FROM "telemetryData" WHERE "componentTelemetryID" = $1 AND collectionDateTime BETWEEN $2 AND $3',
+                            text: 'SELECT * FROM "telemetryData" WHERE "componentTelemetryID" = $1 AND "collectionDateTime" BETWEEN $2 AND $3',
                             values: [req.params.componentTelemetryID, new Date(parseInt(req.query.startDate)), new Date(parseInt(req.query.endDate))]
                             }
                     var response = await client.query(query)
+                    console.log(response.rows);
                     res.json(response.rows);
 
                 } else {

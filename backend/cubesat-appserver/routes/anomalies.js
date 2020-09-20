@@ -22,22 +22,22 @@ router.route('/')
 
                             FROM (
 
-                                SELECT "td.telemetryDataID" as '"telemDataId"', 
-                                        "td.collectionDateTime" as '"collectionTime"', 
-                                        "ct.name" as '"compTelemName"', 
-                                        "c.name" as '"compName"', 
-                                        "s.systemName" as '"sysName"', 
-                                        "ct.upperBound" as '"upperBound"', 
-                                        "ct.lowerBound" as '"lowerBound"', 
-                                        "td.telemetryValue" as '"reading"', 
-                                        "tt.telemetryUni"t as '"unit"' 
+                                SELECT td."telemetryDataID" as '"telemDataId"', 
+                                        td."collectionDateTime" as '"collectionTime"', 
+                                        ct."name" as '"compTelemName"', 
+                                        c."name" as '"compName"', 
+                                        s."systemName" as '"sysName"', 
+                                        ct."upperBound" as '"upperBound"', 
+                                        ct."lowerBound" as '"lowerBound"', 
+                                        td."telemetryValue" as '"reading"', 
+                                        tt."telemetryUnit" as '"unit"' 
 
                                 FROM "telemetryData" td 
 
-                                INNER JOIN "componentTelemetry" ct ON "td.componentTelemetryID" = "ct.componentTelemetryID"
-                                INNER JOIN "components" c ON "ct.componentID" = "c.componentID" 
-                                INNER JOIN "systems" s ON "c.systemID" = "s.systemID" 
-                                INNER JOIN "telemetryTypes" tt ON "tt.telemetryTypeID" = "ct.telemetryTypeID"
+                                INNER JOIN "componentTelemetry" ct ON td."componentTelemetryID" = ct."componentTelemetryID"
+                                INNER JOIN "components" c ON ct."componentID" = c."componentID" 
+                                INNER JOIN "systems" s ON c."systemID" = s."systemID" 
+                                INNER JOIN "telemetryTypes" tt ON tt."telemetryTypeID" = ct."telemetryTypeID"
 
                                 ) AS everything 
 
