@@ -5,6 +5,7 @@
 /tmp
 /out-tsc
 /documentation
+/environments
 
 # dependencies
 /node_modules
@@ -44,5 +45,5 @@ testem.log
 .DS_Store
 Thumbs.db
 
-# Environmeny variables
-/environments
+# Environment Files
+/src/environtments/*
