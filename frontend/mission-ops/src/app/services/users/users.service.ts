@@ -23,17 +23,17 @@ export interface ICreateUserCallback {
 })
 export class UsersService {
 
-  private cognitoIdentityServiceProvider: CognitoIdentityServiceProvider;
+  //private cognitoIdentityServiceProvider: CognitoIdentityServiceProvider;
   private userList: Array<User>;
   private userListObs$: Observable<Array<User>>;
 
   constructor() { 
     // TODO: move this configuration information somewhere appropriate
-    this.cognitoIdentityServiceProvider = new CognitoIdentityServiceProvider({
-      accessKeyId: env.cognito.accessKeyId,
-      secretAccessKey: env.cognito.secretAccessKey,
-      region: env.cognito.region
-    });
+    // this.cognitoIdentityServiceProvider = new CognitoIdentityServiceProvider({
+    //   accessKeyId: env.cognito.accessKeyId,
+    //   secretAccessKey: env.cognito.secretAccessKey,
+    //   region: env.cognito.region
+    // });
 
     this.userListObs$ = this.fetchUsers();
   }
@@ -83,35 +83,35 @@ export class UsersService {
    */
   public getUser(userId: string): Observable<User> {
     const obs$ = new Observable<User>((subscriber) => {
-      this.cognitoIdentityServiceProvider.adminGetUser({
-        UserPoolId: env.cognito.userPoolId,
-        Username: userId
-      }, (err, data) => {
-        if (err) {
-          subscriber.error(err);
-        } else {
-          const user = new User();
-          data.UserAttributes.forEach((att) => {
-            if (att.Name === 'email') {
-              user.email = att.Value;
-            } else if (att.Name === 'custom:administrator') {
-              user.administrator = att.Value === 'true';
-            } else if (att.Name === 'sub') {
-              user.id = att.Value;
-            } else if (att.Name === 'phone_number') {
-              user.phone = att.Value;
-            } else if (att.Name === 'custom:prefContactMethod') {
-              user.preferredContactMethod = att.Value;
-            } else if (att.Name === 'preferred_username') {
-              user.name = att.Value;
-            }
-          });
-          user.status = data.UserStatus;
+      // this.cognitoIdentityServiceProvider.adminGetUser({
+      //   UserPoolId: env.cognito.userPoolId,
+      //   Username: userId
+      // }, (err, data) => {
+      //   if (err) {
+      //     subscriber.error(err);
+      //   } else {
+      //     const user = new User();
+      //     data.UserAttributes.forEach((att) => {
+      //       if (att.Name === 'email') {
+      //         user.email = att.Value;
+      //       } else if (att.Name === 'custom:administrator') {
+      //         user.administrator = att.Value === 'true';
+      //       } else if (att.Name === 'sub') {
+      //         user.id = att.Value;
+      //       } else if (att.Name === 'phone_number') {
+      //         user.phone = att.Value;
+      //       } else if (att.Name === 'custom:prefContactMethod') {
+      //         user.preferredContactMethod = att.Value;
+      //       } else if (att.Name === 'preferred_username') {
+      //         user.name = att.Value;
+      //       }
+      //     });
+      //     user.status = data.UserStatus;
 
-          subscriber.next(user);
-          subscriber.complete();
-        }
-      })
+      //     subscriber.next(user);
+      //     subscriber.complete();
+      //   }
+      // })
     });
 
     return obs$;
@@ -145,18 +145,18 @@ export class UsersService {
     });
     
     const obs$ = new Observable<void>((subscriber) => {
-      this.cognitoIdentityServiceProvider.adminUpdateUserAttributes({
-        UserPoolId: env.cognito.userPoolId,
-        Username: user.id,
-        UserAttributes: attributes
-      }, (err, data) => {
-        if (err) {
-          subscriber.error(err);
-        } else {
-          subscriber.next();
-          subscriber.complete();
-        }
-      })
+      // this.cognitoIdentityServiceProvider.adminUpdateUserAttributes({
+      //   UserPoolId: env.cognito.userPoolId,
+      //   Username: user.id,
+      //   UserAttributes: attributes
+      // }, (err, data) => {
+      //   if (err) {
+      //     subscriber.error(err);
+      //   } else {
+      //     subscriber.next();
+      //     subscriber.complete();
+      //   }
+      // })
     });
 
     return obs$;
@@ -201,22 +201,22 @@ export class UsersService {
       });
     }
 
-    this.cognitoIdentityServiceProvider.adminCreateUser({
-      UserPoolId: env.cognito.userPoolId,
-      Username: email,
-      TemporaryPassword: password,
-      UserAttributes: attributes,
-      DesiredDeliveryMediums: [
-        'EMAIL'
-      ]
-    }, (err, data) => {
-      if (err) {
-        callback.onFailure(err);
-      } else {
-        this.fetchUsers();    // Fetch updated user list
-        callback.onSuccess();
-      }
-    });
+    // this.cognitoIdentityServiceProvider.adminCreateUser({
+    //   UserPoolId: env.cognito.userPoolId,
+    //   Username: email,
+    //   TemporaryPassword: password,
+    //   UserAttributes: attributes,
+    //   DesiredDeliveryMediums: [
+    //     'EMAIL'
+    //   ]
+    // }, (err, data) => {
+    //   if (err) {
+    //     callback.onFailure(err);
+    //   } else {
+    //     this.fetchUsers();    // Fetch updated user list
+    //     callback.onSuccess();
+    //   }
+    // });
   }
 
   /**
@@ -229,58 +229,58 @@ export class UsersService {
    */
   private fetchUsers(paginationToken: string = null): Observable<Array<User>> {
     const obs$ = new Observable<Array<User>>((subscriber) => {
-      this.cognitoIdentityServiceProvider.listUsers({
-        UserPoolId: env.cognito.userPoolId,
-        PaginationToken: paginationToken
-      }, (err, data) => {
-        if (err) {
-          // Something went wrong getting the users. Just pass the error along
-          subscriber.error(err);
-        } else {
-          const users: Array<User> = [];
+      // this.cognitoIdentityServiceProvider.listUsers({
+      //   UserPoolId: env.cognito.userPoolId,
+      //   PaginationToken: paginationToken
+      // }, (err, data) => {
+      //   if (err) {
+      //     // Something went wrong getting the users. Just pass the error along
+      //     subscriber.error(err);
+      //   } else {
+      //     const users: Array<User> = [];
 
-          // Convert incoming user data into user objects
-          data.Users.forEach((u) => {
-            const user = new User();
-            u.Attributes.forEach((att) => {
-              if (att.Name === 'email') {
-                user.email = att.Value;
-              } else if (att.Name === 'custom:administrator') {
-                user.administrator = att.Value === 'true';
-              } else if (att.Name === 'sub') {
-                user.id = att.Value;
-              } else if (att.Name === 'phone_number') {
-                user.phone = att.Value;
-              } else if (att.Name === 'custom:prefContactMethod') {
-                user.preferredContactMethod = att.Value;
-              } else if (att.Name === 'preferred_username') {
-                user.name = att.Value;
-              }
-            });
-            user.status = u.UserStatus;
-            users.push(user);
-          });
+      //     // Convert incoming user data into user objects
+      //     data.Users.forEach((u) => {
+      //       const user = new User();
+      //       u.Attributes.forEach((att) => {
+      //         if (att.Name === 'email') {
+      //           user.email = att.Value;
+      //         } else if (att.Name === 'custom:administrator') {
+      //           user.administrator = att.Value === 'true';
+      //         } else if (att.Name === 'sub') {
+      //           user.id = att.Value;
+      //         } else if (att.Name === 'phone_number') {
+      //           user.phone = att.Value;
+      //         } else if (att.Name === 'custom:prefContactMethod') {
+      //           user.preferredContactMethod = att.Value;
+      //         } else if (att.Name === 'preferred_username') {
+      //           user.name = att.Value;
+      //         }
+      //       });
+      //       user.status = u.UserStatus;
+      //       users.push(user);
+      //     });
 
-          if (data.PaginationToken) {
-            // There's at least one more page of users, so go get it
-            const nextUsersObs$: Observable<Array<User>> = this.fetchUsers(data.PaginationToken);
-            nextUsersObs$.subscribe((nextUsers: User[]) => {
-              // Send all the users found so far
-              subscriber.next(users.concat(nextUsers));
-            }, (err) => {
-              // Something went wrong up the chain. Just pass the error along
-              subscriber.error(err);
-            }, () => {
-              // The next observable in the chain completed, so I should too
-              subscriber.complete();
-            })
-          } else {
-            // No more users, send off what we have
-            subscriber.next(users);
-            subscriber.complete();
-          }
-        }
-      });
+      //     if (data.PaginationToken) {
+      //       // There's at least one more page of users, so go get it
+      //       const nextUsersObs$: Observable<Array<User>> = this.fetchUsers(data.PaginationToken);
+      //       nextUsersObs$.subscribe((nextUsers: User[]) => {
+      //         // Send all the users found so far
+      //         subscriber.next(users.concat(nextUsers));
+      //       }, (err) => {
+      //         // Something went wrong up the chain. Just pass the error along
+      //         subscriber.error(err);
+      //       }, () => {
+      //         // The next observable in the chain completed, so I should too
+      //         subscriber.complete();
+      //       })
+      //     } else {
+      //       // No more users, send off what we have
+      //       subscriber.next(users);
+      //       subscriber.complete();
+      //     }
+      //   }
+      // });
     });
 
     return obs$;
@@ -297,18 +297,18 @@ export class UsersService {
    */
   public deleteUser(user: User): Observable<void> {
     const obs$ = new Observable<void>((subscriber) => {
-      this.cognitoIdentityServiceProvider.adminDeleteUser({
-        UserPoolId: env.cognito.userPoolId,
-        Username: user.id
-      }, (err, data) => {
-        if (err) {
-          subscriber.error(err);
-        } else {
-          this.fetchUsers();  // Fetch updated user list
-          subscriber.next();
-        }
-        subscriber.complete();
-      });
+      // this.cognitoIdentityServiceProvider.adminDeleteUser({
+      //   UserPoolId: env.cognito.userPoolId,
+      //   Username: user.id
+      // }, (err, data) => {
+      //   if (err) {
+      //     subscriber.error(err);
+      //   } else {
+      //     this.fetchUsers();  // Fetch updated user list
+      //     subscriber.next();
+      //   }
+      //   subscriber.complete();
+      // });
     });
     return obs$;
   }
@@ -323,17 +323,17 @@ export class UsersService {
    */
   public resetUserPassword(user: User): Observable<void> {
     const obs$ = new Observable<void>((subscriber) => {
-      this.cognitoIdentityServiceProvider.adminResetUserPassword({
-        UserPoolId: env.cognito.userPoolId,
-        Username: user.id
-      }, (err, data) => {
-        if (err) {
-          subscriber.error(err);
-        } else {
-          subscriber.next();
-          subscriber.complete();
-        }
-      });
+      // this.cognitoIdentityServiceProvider.adminResetUserPassword({
+      //   UserPoolId: env.cognito.userPoolId,
+      //   Username: user.id
+      // }, (err, data) => {
+      //   if (err) {
+      //     subscriber.error(err);
+      //   } else {
+      //     subscriber.next();
+      //     subscriber.complete();
+      //   }
+      // });
     });
     return obs$;
   }

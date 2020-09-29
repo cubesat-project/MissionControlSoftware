@@ -16,16 +16,16 @@ import { User } from 'src/classes/user';
  * @export
  * @interface ISignInCallback
  */
-export interface ISignInCallback {
-  onSuccess: (accessToken: string) => void,
-  onFailure: (err: any) => void,
-  newPasswordRequired?: () => Observable<string>,
-  mfaRequired?: (challengeName: any, challengeParameters: any) => string,
-  totpRequired?: (challengeName: any, challengeParameters: any) => void,
-  customChallenge?: (challengeParameters: any) => void,
-  mfaSetup?: (challengeName: any, challengeParameters: any) => void,
-  selectMFAType?: (challengeName: any, challengeParameters: any) => void
-}
+// export interface ISignInCallback {
+//   onSuccess: (accessToken: string) => void,
+//   onFailure: (err: any) => void,
+//   newPasswordRequired?: () => Observable<string>,
+//   mfaRequired?: (challengeName: any, challengeParameters: any) => string,
+//   totpRequired?: (challengeName: any, challengeParameters: any) => void,
+//   customChallenge?: (challengeParameters: any) => void,
+//   mfaSetup?: (challengeName: any, challengeParameters: any) => void,
+//   selectMFAType?: (challengeName: any, challengeParameters: any) => void
+// }
 
 /**
  * A service for managing authentication.
@@ -85,7 +85,7 @@ export class AuthService {
   }
 
   public isAdministrator(): boolean {
-    return true;
+    return false;
   }
 
   public getCurrentUser(): User {
