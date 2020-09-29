@@ -49,11 +49,30 @@ export class AuthService {
       if (user) this.authStatus = true;
       else this.authStatus = false;
     });
-   }
+  }
 
 
   signIn(email: string, password: string): void {
-    this.afAuth.signInWithEmailAndPassword(email, password);
+    this.afAuth.signInWithEmailAndPassword(email, password).catch(function (error) {
+      // Handle Errors here.
+      var errorCode = error.code;
+      var errorMessage = error.message;
+      if (errorCode === 'auth/wrong-password') {
+        alert('Wrong password.');
+      } else if (errorCode === 'auth/invalid-email') {
+        alert('Invalid Email.');
+      }
+      else if (errorCode === 'auth/user-disabled') {
+        alert('User is disabled.');
+      }
+      else if (errorCode === 'auth/user-not-found') {
+        alert('User is not found.');
+      }
+      else {
+        alert(errorMessage);
+      }
+      console.log(error);
+    });
   }
 
   signOut(): void {
@@ -80,7 +99,7 @@ export class AuthService {
 
   public forgotPassword(username: string): Observable<void> {
     const obs$ = new Observable<void>((subscriber) => {
-      
+
     });
 
     return obs$;
