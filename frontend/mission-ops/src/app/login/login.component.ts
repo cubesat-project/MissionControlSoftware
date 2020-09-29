@@ -75,38 +75,7 @@ export class LoginComponent implements OnInit {
       return;
     }
 
-    this.auth.signIn(this.email, this.password, {
-      onSuccess: () => {
-        this.processing = false;
-        this.router.navigateByUrl('/');
-      },
-      onFailure: (err: any) => {
-        this.processing = false;
-
-        if (err.name === 'PasswordResetRequiredException') {
-          // Password reset required, time to open the reset password modal
-          this.resetPwdModal.open();
-        } else if (isDevMode()) {
-          // Only display real error when developing to avoid information leaks
-          this.loginAlert.show(err.name, err.message, 'danger');
-        } else {
-          this.loginAlert.show('Error', 'Email or Password is Incorrect', 'danger');
-        }
-      },
-      mfaRequired: (challengeName: any, challengeParameters: any) => {
-        // TODO: expand this to actually support MFA if needed.
-        this.processing = false;
-
-        console.log('mfa required');
-        console.log(challengeName);
-        console.log(challengeParameters);
-        return '';
-      },
-      newPasswordRequired: () => {
-        this.processing = false;
-        return from(this.newPwdModal.open());
-      }
-    })
+    this.auth.signIn(this.email, this.password);
   }
 
   public resetPassword(): void {

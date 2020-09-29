@@ -5,6 +5,8 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap'; // TODO: Before deployme
 import { HttpClientModule } from '@angular/common/http'; 
 import { CommonModule } from '@angular/common';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { AngularFireModule } from "@angular/fire";
+import { AngularFireAuthModule } from "@angular/fire/auth";
 
 import { HighchartsChartModule } from 'highcharts-angular';
 import { ToastrModule } from 'ngx-toastr';
@@ -55,6 +57,7 @@ import { MediaViewComponent } from './media-view/media-view.component';
 import { SortableDirective } from 'src/app/services/anomalies/sortable.directive';
 import { CreateTelemetryTypeComponent } from './create-telemetry-type/create-telemetry-type.component';
 import { FooterComponent } from './footer/footer.component';
+import { environment } from 'src/environments/environment';
 
 @NgModule({
   declarations: [
@@ -118,6 +121,8 @@ import { FooterComponent } from './footer/footer.component';
     MomentModule,
     OwlDateTimeModule,
     OwlMomentDateTimeModule,
+    AngularFireModule.initializeApp(environment.firebase),
+    AngularFireAuthModule,
   ],
   bootstrap: [AppComponent],
   entryComponents: [
