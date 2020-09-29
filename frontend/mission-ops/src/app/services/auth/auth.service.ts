@@ -39,27 +39,29 @@ import { User } from 'src/classes/user';
   providedIn: 'root'
 })
 export class AuthService {
+  // Keeps track of current user's the autentication status
+  public authStatus: boolean = false;
 
   constructor(
-    public auth: AngularFireAuth,
-  ) { }
+    public afAuth: AngularFireAuth,
+  ) {
+    this.afAuth.onAuthStateChanged(function (user) {
+      if (user) this.authStatus = true;
+      else this.authStatus = false;
+    });
+   }
+
 
   signIn(email: string, password: string): void {
-    this.auth.signInWithEmailAndPassword(email, password);
+    this.afAuth.signInWithEmailAndPassword(email, password);
   }
 
   signOut(): void {
-    this.auth.signOut();
+    this.afAuth.signOut();
   }
 
   public isAuthenticated(): boolean {
-    let authStatus: boolean = false;
-
-    this.auth.onAuthStateChanged(function (user) {
-      if (user) authStatus = true;
-      else authStatus = false;
-    });
-    return authStatus;
+    return this.authStatus;
   }
 
   public changePassword(oldPassword: string, newPassword: string): Observable<void> {
@@ -78,7 +80,7 @@ export class AuthService {
 
   public forgotPassword(username: string): Observable<void> {
     const obs$ = new Observable<void>((subscriber) => {
-
+      
     });
 
     return obs$;
@@ -89,7 +91,9 @@ export class AuthService {
   }
 
   public getCurrentUser(): User {
-    return new User();
+    let myUser = new User();
+
+    return myUser;
   }
 
 

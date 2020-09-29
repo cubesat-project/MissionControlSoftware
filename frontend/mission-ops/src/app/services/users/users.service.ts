@@ -35,7 +35,7 @@ export class UsersService {
     //   region: env.cognito.region
     // });
 
-    this.userListObs$ = this.fetchUsers();
+    //this.userListObs$ = this.fetchUsers();
   }
 
   /**
